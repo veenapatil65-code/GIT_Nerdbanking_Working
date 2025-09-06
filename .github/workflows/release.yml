@@ -1,0 +1,75 @@
+name: Release
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout (full history for NBGV)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Install Nerdbank.GitVersioning CLI
+        run: dotnet tool install --global nbgv
+
+      - name: Configure git user
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+
+      - name: Compute Version (NBGV)
+        uses: dotnet/nbgv@v0.4
+        with:
+          setAllVars: true
+
+      - name: Show version info
+        run: |
+          echo "SemVer2          : $NBGV_SemVer2"
+          echo "SimpleVersion    : $NBGV_SimpleVersion"
+          echo "NuGetPackageVer  : $NBGV_NuGetPackageVersion"
+          echo "Commit           : $NBGV_GitCommitId"
+          echo "NBGV_SimpleVersion=$NBGV_SimpleVersion" >> $GITHUB_ENV
+
+      - name: Prepare Release
+        run: nbgv prepare-release
+
+      - name: Create Tag
+        run: nbgv tag
+
+      - name: Push tags and branches
+        env:
+          GIT_AUTHOR_NAME: github-actions
+          GIT_AUTHOR_EMAIL: github-actions@github.com
+          GIT_COMMITTER_NAME: github-actions
+          GIT_COMMITTER_EMAIL: github-actions@github.com
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "$GIT_AUTHOR_NAME"
+          git config --global user.email "$GIT_AUTHOR_EMAIL"
+          git push origin --tags
+          git push origin HEAD:release/v${{ env.NBGV_SimpleVersion }}
+
+      - name: Get latest tag
+        id: get_tag
+        run: |
+          echo "LATEST_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.LATEST_TAG }}
+          release_name: Release ${{ env.LATEST_TAG }}
+          draft: false
+          prerelease: true
