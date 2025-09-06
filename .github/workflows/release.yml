@@ -38,7 +38,7 @@ jobs:
           echo "SimpleVersion    : $NBGV_SimpleVersion"
           echo "NuGetPackageVer  : $NBGV_NuGetPackageVersion"
           echo "Commit           : $NBGV_GitCommitId"
-          echo "NBGV_SimpleVersion=$NBGV_SimpleVersion" >> $GITHUB_ENV
+          echo "NBGV_SemVer2=$NBGV_SemVer2" >> $GITHUB_ENV
 
       - name: Prepare Release
         run: nbgv prepare-release
@@ -57,19 +57,14 @@ jobs:
           git config --global user.name "$GIT_AUTHOR_NAME"
           git config --global user.email "$GIT_AUTHOR_EMAIL"
           git push origin --tags
-          git push origin HEAD:release/v${{ env.NBGV_SimpleVersion }}
-
-      - name: Get latest tag
-        id: get_tag
-        run: |
-          echo "LATEST_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+          git push origin HEAD:release/v${{ env.NBGV_SemVer2 }}
 
       - name: Create GitHub Release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.LATEST_TAG }}
-          release_name: Release ${{ env.LATEST_TAG }}
+          tag_name: v${{ env.NBGV_SemVer2 }}
+          release_name: Release v${{ env.NBGV_SemVer2 }}
           draft: false
-          prerelease: true
+          prerelease: false
