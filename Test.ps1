@@ -15,3 +15,4 @@ Get-PSDrive -PSProvider 'FileSystem' | ForEach-Object {
     $freeGB = if ($_.Free -eq $null) { 0 } else { [math]::Round(($_.Free/1GB),2) }
     Write-Host "$($_.Name): Used $usedGB GB, Free $freeGB GB"
 }
+
