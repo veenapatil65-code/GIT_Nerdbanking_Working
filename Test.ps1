@@ -16,3 +16,4 @@ Get-PSDrive -PSProvider 'FileSystem' | ForEach-Object {
     Write-Host "$($_.Name): Used $usedGB GB, Free $freeGB GB"
 }
 
+
