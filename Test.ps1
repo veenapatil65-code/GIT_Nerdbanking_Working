@@ -1,9 +1,9 @@
 Write-Host "Hello, World!"
 Get-Date
 
-# Major breaking change: Remove process and service listing, add network adapter summary
-Write-Host "Listing all network adapters (breaking change: replaces process and service listing):"
-Get-NetAdapter | Select-Object Name, Status, MacAddress | Format-Table -AutoSize
+# Major breaking change: Replace network adapter summary with IP configuration details
+Write-Host "Listing IP configuration details for all network adapters (breaking change):"
+Get-NetIPConfiguration | Select-Object InterfaceAlias, IPv4Address, IPv6Address, DNSServer | Format-Table -AutoSize
 
 Write-Host "Current directory: $(Get-Location)"
 
@@ -15,4 +15,5 @@ Get-PSDrive -PSProvider 'FileSystem' | ForEach-Object {
     $freeGB = if ($_.Free -eq $null) { 0 } else { [math]::Round(($_.Free/1GB),2) }
     Write-Host "$($_.Name): Used $usedGB GB, Free $freeGB GB"
 }
+
 
