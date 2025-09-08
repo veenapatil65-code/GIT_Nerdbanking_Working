@@ -7,7 +7,6 @@ Get-NetIPConfiguration | Select-Object InterfaceAlias, IPv4Address, IPv6Address,
 
 Write-Host "Current directory: $(Get-Location)"
 
-# New feature: Display disk space information
 Write-Host "Disk space information for all drives:"
 Get-PSDrive -PSProvider 'FileSystem' | ForEach-Object 
 
