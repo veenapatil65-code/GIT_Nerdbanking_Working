@@ -12,7 +12,11 @@
       "enabled": true
     }
   },
+  "nuGetPackageVersion": {
+    "semVer":2.0
+  },
   "release": {
     "branchName": "release/v{version}"
+    "firstUnstableTag": "pre"
   }
 }
