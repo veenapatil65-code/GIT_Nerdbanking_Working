@@ -1,6 +1,5 @@
 Write-Host "Hello, World!"
 Get-Date
-
 # Major breaking change: Replace network adapter summary with IP configuration details
 Write-Host "Listing IP configuration details for all network adapters (breaking change):"
 Get-NetIPConfiguration | Select-Object InterfaceAlias, IPv4Address, IPv6Address, DNSServer | Format-Table -AutoSize
