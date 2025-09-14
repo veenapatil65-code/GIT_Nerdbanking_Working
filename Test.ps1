@@ -9,7 +9,6 @@ Write-Host "Current directory: $(Get-Location)"
 
 Write-Host "Disk space information for all drives:"
 Get-PSDrive -PSProvider 'FileSystem' | ForEach-Object 
-
 {
     # Patch fix: Corrected calculation to avoid division by zero
     $usedGB = if ($_.Used -eq $null) { 0 } else { [math]::Round(($_.Used/1GB),2) }
